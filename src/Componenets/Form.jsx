@@ -1,6 +1,7 @@
 import React, { useState,useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Form.css"; // Custom CSS for styling
+import Login from "./Login";
 import logo from "./Images/jy.png";
 import Counter from "./Counter";
 import RightSection from "./RightSection";
@@ -11,7 +12,6 @@ const Form = () => {
   const [category, setCategory] = useState("");;
   const [isFormValid, setIsFormValid] = useState(false);
   const [numChildren, setNumChildren] = useState(0);
-
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -129,7 +129,14 @@ const Form = () => {
     };
   
   ;
-  
+  let amount = 0;
+  if (formData.category === "family") {
+    amount = 150000;  // Amount in paise for INR (1500 INR)
+  } else if (formData.category === "youth") {
+    amount = 100000;  // Amount in paise for INR (10000 INR)
+  } else if (formData.category === "campus") {
+    amount = 100000;  // Amount in paise for INR (10000 INR)
+  }
     try {
       const response = await axios.post("https://backendchrist.onrender.com/submit-form", formDataToSubmit, {
         headers: { "Content-Type": "application/json" },
@@ -146,7 +153,7 @@ const Form = () => {
   
       const options = {
         key: "rzp_test_FDdpxQ8060aeNv", // Your Razorpay key
-        amount: 150000, // In smallest unit (paise for INR)
+        amount: amount, // In smallest unit (paise for INR)
         currency: "INR",
         name: "Jesus Youth Event",
         description: "Registration Fee",
@@ -225,7 +232,7 @@ const Form = () => {
 </div>
 
         <div className="left-section">
-          <h3 className="text-white fw-bold ">FILL THE FORM</h3>
+          <h3 className="text-white fw-bold ">REGISTRATION</h3>
           <form action="https://backendchrist.onrender.com/submit-form" method="POST" onSubmit={handleSubmit} className="row g-3"  >
             {/* FULL NAME */}
             <div className="col-12">
@@ -376,7 +383,7 @@ const Form = () => {
     min="0"
     value={numChildren || ""}
     onChange={(e) => setNumChildren(parseInt(e.target.value))}
-    required
+
   />
 
 

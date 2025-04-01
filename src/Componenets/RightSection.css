@@ -1,4 +1,10 @@
 /* Default styles */
+*{
+    font-family: 'Poppins', sans-serif;
+   
+
+}
+
 .one {
     font-size: 68px;
     text-transform: none;
@@ -49,3 +55,5 @@
         width: 250px;
     }
 }
+
+
