@@ -131,7 +131,7 @@ const Form = () => {
   ;
   
     try {
-      const response = await axios.post("http://localhost:5000/submit-form", formDataToSubmit, {
+      const response = await axios.post("https://backendchrist.onrender.com/submit-form", formDataToSubmit, {
         headers: { "Content-Type": "application/json" },
       });
   
@@ -226,7 +226,7 @@ const Form = () => {
 
         <div className="left-section">
           <h3 className="text-white fw-bold ">FILL THE FORM</h3>
-          <form action="http://localhost:5000/submit-form" method="POST" onSubmit={handleSubmit} className="row g-3"  >
+          <form action="https://backendchrist.onrender.com/submit-form" method="POST" onSubmit={handleSubmit} className="row g-3"  >
             {/* FULL NAME */}
             <div className="col-12">
               <label className="form-label text-white">FULL NAME</label>
