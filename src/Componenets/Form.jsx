@@ -248,7 +248,7 @@ const Form = () => {
            
               <div className="col-md-6">
                 <label className="form-label text-white">HOME LOCATION</label>
-                <select className="form-select" name="homeLocation" value={formData.homeLocation} onChange={handleChange} required>
+                <select className="form-select" style={{ height: "60px" }} name="homeLocation" value={formData.homeLocation} onChange={handleChange} required>
                   <option value="">SELECT LOCATION</option>
                   <option value="Mananthavady">MANANTHAVADY</option>
                   <option value="Dwaraka">DWARAKA</option>
