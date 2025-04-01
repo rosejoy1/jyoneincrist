@@ -1,17 +1,51 @@
+/* Default styles */
 .one {
     font-size: 68px;
     text-transform: none;
- color:rgb(228, 172, 228);
+    color: rgb(228, 172, 228);
 }
-.two{
+
+.two {
     font-size: 30px;
     text-transform: none;
- color:rgb(228, 172, 228);
- font-weight: bolder;
+    color: rgb(228, 172, 228);
+    font-weight: bolder;
 }
-.img-christ{
+
+.img-christ {
     height: 500px;
     width: 500px;
     border-radius: 30px;
+}
 
+/* Responsive styles for small screens (mobile) */
+@media (max-width: 768px) {
+    .one {
+        font-size: 50px;
+    }
+
+    .two {
+        font-size: 24px;
+    }
+
+    .img-christ {
+        height: 300px;
+        width: 300px;
+    }
+}
+
+/* Responsive styles for very small screens (portrait mobile) */
+@media (max-width: 480px) {
+    .one {
+        font-size: 36px;
+    }
+
+    .two {
+        font-size: 20px;
+    }
+
+    .img-christ {
+        height: 250px;
+        width: 250px;
+    }
 }

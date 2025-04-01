@@ -155,118 +155,156 @@ body {
     font-size: 14px;
 }
 
-/* === Fully Responsive Design === */
 @media (max-width: 1024px) {
-    .form-container {
-        flex-direction: column;
-        text-align: center;
-    }
+  .form-container {
+      flex-direction: column;
+      text-align: center;
+  }
 
-    .left-section, .right-section {
-        width: 100%;
-        padding: 15px;
-    }
+  .left-section, .right-section {
+      width: 100%;
+      padding: 15px;
+  }
 
-    .countdown {
-        font-size: 16px;
-        padding: 8px;
-    }
+  .countdown {
+      font-size: 16px;
+      padding: 8px;
+  }
 
-    .countdown span {
-        font-size: 16px;
-        padding: 8px;
-    }
+  .countdown span {
+      font-size: 16px;
+      padding: 8px;
+  }
 
-    .btn-primary, #submit-b {
-        width: 100%;
-        padding: 14px;
-    }
+  .btn-primary, #submit-b {
+      width: 100%;
+      padding: 14px;
+  }
 }
 
 @media (max-width: 768px) {
-    .form-wrapper {
-        padding: 10px;
-    }
+  .form-wrapper {
+      padding: 10px;
+  }
 
-    .form-container {
-        flex-direction: column;
-    }
+  .form-container {
+      flex-direction: column;
+  }
 
-    .countdown {
-        font-size: 14px;
-        padding: 6px;
-    }
+  .countdown {
+      font-size: 14px;
+      padding: 6px;
+  }
 
-    .countdown span {
-        font-size: 14px;
-        padding: 6px;
-    }
+  .countdown span {
+      font-size: 14px;
+      padding: 6px;
+  }
 
-    .form-control, .form-select {
-        font-size: 14px;
-        padding: 10px;
-    }
+  .form-control, .form-select {
+      font-size: 14px;
+      padding: 10px;
+  }
 
-    .btn-primary, #submit-b {
-        font-size: 14px;
-        width: 100%;
-    }
+  .btn-primary, #submit-b {
+      font-size: 14px;
+      width: 100%;
+  }
 }
 
 @media (max-width: 480px) {
-    h2 {
-        font-size: 16px;
-    }
+  h2 {
+      font-size: 16px;
+  }
 
-    .form-container {
-        padding: 10px;
-    }
+  .form-container {
+      padding: 10px;
+  }
 
-    .countdown {
-        font-size: 12px;
-        padding: 5px;
-    }
+  .countdown {
+      font-size: 12px;
+      padding: 5px;
+  }
 
-    .countdown span {
-        font-size: 12px;
-        padding: 5px;
-    }
+  .countdown span {
+      font-size: 12px;
+      padding: 5px;
+  }
 
-    .form-control, .form-select {
-        font-size: 14px;
-        padding: 8px;
-    }
+  .form-control, .form-select {
+      font-size: 14px;
+      padding: 8px;
+  }
 
-    .btn-primary, #submit-b {
-        font-size: 14px;
-    }
+  .btn-primary, #submit-b {
+      font-size: 14px;
+  }
 }
 
 @media (max-width: 375px) {
-    h2 {
-        font-size: 14px;
-    }
+  h2 {
+      font-size: 14px;
+  }
 
-    .form-container {
-        padding: 8px;
-    }
+  .form-container {
+      padding: 8px;
+  }
 
-    .countdown {
-        font-size: 12px;
-        padding: 4px;
-    }
+  .countdown {
+      font-size: 12px;
+      padding: 4px;
+  }
 
-    .countdown span {
-        font-size: 12px;
-        padding: 4px;
-    }
+  .countdown span {
+      font-size: 12px;
+      padding: 4px;
+  }
 
-    .form-control, .form-select {
-        font-size: 12px;
-        padding: 6px;
-    }
+  .form-control, .form-select {
+      font-size: 12px;
+      padding: 6px;
+  }
 
-    .btn-primary, #submit-b {
-        font-size: 12px;
-    }
+  .btn-primary, #submit-b {
+      font-size: 12px;
+  }
+}
+
+/* Additional responsive rules for ultra-small screens (max-width: 200px) */
+@media (max-width: 200px) {
+  body {
+      font-size: 10px;
+  }
+
+  .form-wrapper {
+      padding: 5px;
+  }
+
+  h2 {
+      font-size: 10px;
+  }
+
+  .countdown {
+      font-size: 10px;
+      padding: 3px;
+  }
+
+  .countdown span {
+      font-size: 10px;
+      padding: 3px;
+  }
+
+  .form-control, .form-select {
+      font-size: 10px;
+      padding: 4px;
+  }
+
+  .btn-primary, #submit-b {
+      font-size: 10px;
+  }
+
+  /* Adjust image sizes or other elements */
+  .logo-img {
+      height: 30px;
+  }
 }
