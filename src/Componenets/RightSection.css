@@ -1,0 +1,17 @@
+.one {
+    font-size: 68px;
+    text-transform: none;
+ color:rgb(228, 172, 228);
+}
+.two{
+    font-size: 30px;
+    text-transform: none;
+ color:rgb(228, 172, 228);
+ font-weight: bolder;
+}
+.img-christ{
+    height: 500px;
+    width: 500px;
+    border-radius: 30px;
+
+}

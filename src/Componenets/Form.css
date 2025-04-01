@@ -1,0 +1,272 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+h2 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+body {
+    background: linear-gradient(to bottom, #3e1170 0%, #3e1170 50%, #170651 100%);
+    font-family: 'Poppins', sans-serif;
+    text-transform: uppercase;
+    margin: 0;
+    padding: 0;
+}
+
+/* Form Wrapper */
+.form-wrapper {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.logo-img {
+    height: 50px;
+    width: auto;
+}
+
+/* Countdown Timer */
+.countdown {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Poppins', sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    background: rgba(226, 225, 225, 0.2);
+    padding: 10px 20px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    flex-wrap: wrap;
+    text-align: center;
+}
+
+.countdown span {
+    background: rgba(255, 255, 255, 0.3);
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 18px;
+}
+
+/* Form Container */
+.form-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    flex-wrap: wrap;
+}
+
+.left-section, .right-section {
+    flex: 1;
+    padding: 20px;
+    text-align: center;
+    width: 100%;
+}
+
+/* Contact Info */
+.contact-info p {
+    color: white;
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+/* Form Controls */
+.form-control, .form-select {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 100%;
+    padding: 12px;
+    border-radius: 5px;
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+.form-control::placeholder, .form-select {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.form-select option {
+    background-color: white !important;
+    color: black !important;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: #d1c4e9;
+    border: none;
+    color: black;
+    font-weight: bold;
+    padding: 12px;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.btn-primary:hover {
+    background-color: #b39ddb;
+}
+
+#submit-b {
+    background: rgb(206, 67, 221);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 12px;
+    font-weight: bold;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+#submit-b:hover {
+    background: white;
+    color: #ff416c;
+}
+
+/* Check Icon */
+.check-icon {
+    background: white;
+    color: #ff416c;
+    border-radius: 50%;
+    padding: 3px;
+    margin-left: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
+}
+
+/* === Fully Responsive Design === */
+@media (max-width: 1024px) {
+    .form-container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .left-section, .right-section {
+        width: 100%;
+        padding: 15px;
+    }
+
+    .countdown {
+        font-size: 16px;
+        padding: 8px;
+    }
+
+    .countdown span {
+        font-size: 16px;
+        padding: 8px;
+    }
+
+    .btn-primary, #submit-b {
+        width: 100%;
+        padding: 14px;
+    }
+}
+
+@media (max-width: 768px) {
+    .form-wrapper {
+        padding: 10px;
+    }
+
+    .form-container {
+        flex-direction: column;
+    }
+
+    .countdown {
+        font-size: 14px;
+        padding: 6px;
+    }
+
+    .countdown span {
+        font-size: 14px;
+        padding: 6px;
+    }
+
+    .form-control, .form-select {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .btn-primary, #submit-b {
+        font-size: 14px;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    h2 {
+        font-size: 16px;
+    }
+
+    .form-container {
+        padding: 10px;
+    }
+
+    .countdown {
+        font-size: 12px;
+        padding: 5px;
+    }
+
+    .countdown span {
+        font-size: 12px;
+        padding: 5px;
+    }
+
+    .form-control, .form-select {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .btn-primary, #submit-b {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 375px) {
+    h2 {
+        font-size: 14px;
+    }
+
+    .form-container {
+        padding: 8px;
+    }
+
+    .countdown {
+        font-size: 12px;
+        padding: 4px;
+    }
+
+    .countdown span {
+        font-size: 12px;
+        padding: 4px;
+    }
+
+    .form-control, .form-select {
+        font-size: 12px;
+        padding: 6px;
+    }
+
+    .btn-primary, #submit-b {
+        font-size: 12px;
+    }
+}
