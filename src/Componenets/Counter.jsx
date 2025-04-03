@@ -36,7 +36,7 @@ const Counter = ({ targetDate }) => {
     <div className="countdown-container">
       <div className="countdown-box">
         <div className="flip-clock">
-          <span className="countdown-number">{String(timeLeft.days).padStart(3, "0")}</span>
+          <span className="countdown-number">{String(timeLeft.days).padStart(2, "0")}</span>
         </div>
         <span className="countdown-label">DAYS</span>
       </div>

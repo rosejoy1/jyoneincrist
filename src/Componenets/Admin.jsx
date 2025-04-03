@@ -15,10 +15,6 @@ const Admin = () => {
 
   return (
     <div className="admin-container">
-      <button className="admin-login-btn" onClick={handleLoginClick}>
-        Admin Login
-      </button>
-
       {isPopupOpen && (
         <div className="popup-overlay">
           <div className="popup">

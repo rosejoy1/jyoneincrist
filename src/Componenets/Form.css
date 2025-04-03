@@ -154,6 +154,205 @@ body {
     height: 20px;
     font-size: 14px;
 }
+/* Full-Screen Overlay Background */
+#paymentModal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Dark overlay */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+/* Modal Content with Transparency */
+.modal-content {
+    background: rgba(255, 255, 255, 0.85); /* Semi-transparent white */
+    padding: 25px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 420px;
+    text-align: center;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Smooth Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Close Button */
+.close {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    font-size: 20px;
+    cursor: pointer;
+    color: #555;
+    transition: 0.3s;
+}
+
+.close:hover {
+    color: black;
+}
+
+/* Payment Heading */
+.modal-content h3 {
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* Payment Instructions */
+.modal-content p {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+/* Payment Option Titles */
+.modal-content h4 {
+    font-size: 18px;
+    color: #222;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+/* Center the QR Code */
+/* Center the QR Code */
+/* Center the modal properly */
+.modal-content {
+    background: rgba(255, 255, 255, 0.85);
+    padding: 25px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 420px;
+    text-align: center;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: fadeIn 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center all content inside */
+}
+
+/* Center the QR Code */
+.qr-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 15px 0;
+    text-align: center;
+}
+
+.qr-container img {
+    display: block;
+    max-width: 180px; /* Adjust if needed */
+    height: auto;
+    border-radius: 10px;
+    border: 2px solid #ddd;
+    padding: 5px;
+    margin: 0 auto;
+}
+
+/* Centered Buttons */
+.btn-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+}
+
+/* Make buttons centered */
+.btn {
+    width: 100%;
+    max-width: 240px;
+    text-align: center;
+}
+
+
+/* Pay Now Button */
+.btn-green {
+    background: linear-gradient(90deg, #00c853, #009688);
+    color: white;
+    font-weight: bold;
+}
+
+.btn-green:hover {
+    background: linear-gradient(90deg, #009688, #00796b);
+    transform: scale(1.05);
+}
+
+/* Pay Later Button */
+.btn-grey {
+    background: linear-gradient(90deg, #9e9e9e, #757575);
+    color: white;
+    font-weight: bold;
+}
+
+.btn-grey:hover {
+    background: linear-gradient(90deg, #757575, #616161);
+    transform: scale(1.05);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 600px) {
+    .modal-content {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .btn {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .qr-container img {
+        max-width: 180px;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .modal-content {
+        width: 100%;
+        padding: 15px;
+    }
+
+    .btn {
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    .qr-container img {
+        max-width: 160px;
+    }
+
+    h3, h4 {
+        font-size: 18px;
+    }
+
+    p {
+        font-size: 14px;
+    }
+}
+
 
 @media (max-width: 1024px) {
   .form-container {
