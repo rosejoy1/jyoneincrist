@@ -37,17 +37,17 @@ const Form = () => {
 
   const handlePayment = async () => {
     console.log("handlePayment triggered");
-  
+
     closePaymentModal();
-  
+
     try {
       if (!formData.email) {
         alert("Please enter your email before proceeding.");
         return;
       }
-  
+
       console.log("Submitting payment for:", formData.email);
-  
+
       const response = await fetch("https://backendchrist.onrender.com/update-payment-status", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -56,13 +56,13 @@ const Form = () => {
           paymentStatus: "yes",
         }),
       });
-  
+
       const data = await response.json();
       console.log("Raw backend response:", data);
-  
+
       if (data.success || data.message) {
         setFormData((prev) => ({ ...prev, paymentStatus: "yes" }));
-  
+
         setDialogContent({
           title: "🎉 Registration Completed",
           message: "Your payment was successful! Please send the screenshot to Jesus Youth Mananthavady (+91 8943548306).",
@@ -74,10 +74,10 @@ const Form = () => {
       console.error("Error updating payment status:", error);
       alert("Failed to update payment status. Please try again.");
     }
-  
+
     setShowDialog(true);
   };
-  
+
   const handlePayLater = async () => {
     closePaymentModal();
     try {
@@ -85,7 +85,7 @@ const Form = () => {
         alert("Please enter your email before proceeding.");
         return;
       }
-  
+
       // Send request to backend to update payment status to "no"
       const response = await fetch("https://backendchrist.onrender.com/update-payment-status", {
         method: "POST",
@@ -95,13 +95,13 @@ const Form = () => {
           paymentStatus: "no", // <-- Ensure it updates as "no"
         }),
       });
-  
+
       const data = await response.json();
       console.log("Payment update response:", data); // Debugging
-  
+
       if (data.message) {
         setFormData((prev) => ({ ...prev, paymentStatus: "no" })); // Update local state
-  
+
         setDialogContent({
           title: "ℹ️ Registration Completed",
           message: "Your payment is pending. Please complete it later.",
@@ -113,10 +113,10 @@ const Form = () => {
       console.error("Error updating payment status:", error);
       alert("Failed to update payment status. Please try again.");
     }
-  
+
     setShowDialog(true);
   };
-  
+
 
   // FOR HANDLE ADMIN LOGIN
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -148,128 +148,128 @@ const Form = () => {
     children: [],
   });
 
-// Handle general input changes
-const handleChange = (e) => {
-  const { name, value } = e.target;
-  const parsedValue = name === "numChildren" ? parseInt(value) : value;
+  // Handle general input changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    const parsedValue = name === "numChildren" ? parseInt(value) : value;
 
-  setFormData((prevState) => {
-    const updatedForm = {
-      ...prevState,
-      [name]: parsedValue,
-    };
+    setFormData((prevState) => {
+      const updatedForm = {
+        ...prevState,
+        [name]: parsedValue,
+      };
 
-    // Handle spouse fields (if needed)
-    if (
-      updatedForm.category === "family" &&
-      (name === "spouseName" || name === "spousePhone") &&
-      updatedForm.gender
-    ) {
-      updatedForm[name] = value;
-    }
+      // Handle spouse fields (if needed)
+      if (
+        updatedForm.category === "family" &&
+        (name === "spouseName" || name === "spousePhone") &&
+        updatedForm.gender
+      ) {
+        updatedForm[name] = value;
+      }
 
-    validateForm(updatedForm);
-    return updatedForm;
-  });
-};
+      validateForm(updatedForm);
+      return updatedForm;
+    });
+  };
 
-// Handle child input changes
-const handleChildrenChange = (index, field, value) => {
-  setFormData((prevData) => {
-    const updatedChildren = [...prevData.children];
+  // Handle child input changes
+  const handleChildrenChange = (index, field, value) => {
+    setFormData((prevData) => {
+      const updatedChildren = [...prevData.children];
 
-    // Ensure the child exists
-    if (!updatedChildren[index]) {
-      updatedChildren[index] = { name: "", age: "", gender: "" };
-    }
+      // Ensure the child exists
+      if (!updatedChildren[index]) {
+        updatedChildren[index] = { name: "", age: "", gender: "" };
+      }
 
-    updatedChildren[index] = {
-      ...updatedChildren[index],
-      [field]: value,
-    };
+      updatedChildren[index] = {
+        ...updatedChildren[index],
+        [field]: value,
+      };
 
-    return {
-      ...prevData,
-      children: updatedChildren,
-    };
-  });
-};
+      return {
+        ...prevData,
+        children: updatedChildren,
+      };
+    });
+  };
 
   // Validate form fields
-const validateForm = (updatedForm) => {
-  const requiredFields = [
-    "fullName",
-    "houseName",
-    "place",
-    "parish",
-    "email",
-    "phone",
-    "dob",
-    "accommodation",
-    "gender",
-  ];
+  const validateForm = (updatedForm) => {
+    const requiredFields = [
+      "fullName",
+      "houseName",
+      "place",
+      "parish",
+      "email",
+      "phone",
+      "dob",
+      "accommodation",
+      "gender",
+    ];
 
-  if (updatedForm.category === "family") {
-    requiredFields.push("spouseName", "spousePhone");
-  }
-
-  const isValid = requiredFields.every((field) => {
-    const value = updatedForm[field];
-
-    if (typeof value === "string") {
-      return value.trim() !== "";
+    if (updatedForm.category === "family") {
+      requiredFields.push("spouseName", "spousePhone");
     }
 
-    return value !== undefined && value !== null && value !== "";
-  });
+    const isValid = requiredFields.every((field) => {
+      const value = updatedForm[field];
 
-  setIsFormValid(isValid);
-};
+      if (typeof value === "string") {
+        return value.trim() !== "";
+      }
+
+      return value !== undefined && value !== null && value !== "";
+    });
+
+    setIsFormValid(isValid);
+  };
 
 
   useEffect(() => {
     validateForm(formData);
   }, [formData]);
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true); // Start loading
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true); // Start loading
 
-  const formDataToSubmit = {
-    ...formData,
-    numChildren: numChildren,
-    children: formData.children.map((child) => ({
-      name: child.name,
-      age: child.age,
-      gender: child.gender,
-    })),
-    paymentStatus: "no", // Default until payment is confirmed
+    const formDataToSubmit = {
+      ...formData,
+      numChildren: numChildren,
+      children: formData.children.map((child) => ({
+        name: child.name,
+        age: child.age,
+        gender: child.gender,
+      })),
+      paymentStatus: "no", // Default until payment is confirmed
+    };
+
+    try {
+      const response = await axios.post(
+        "https://backendchrist.onrender.com/submit-form",
+        formDataToSubmit,
+        { headers: { "Content-Type": "application/json" } }
+      );
+      console.log("Success:", response.data);
+
+      setShowInitialPaymentButtons(true);  // Show modal after API success
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("Form submission failed. Please try again.");
+    } finally {
+      setLoading(false); // Stop loading after API response
+    }
   };
 
-  try {
-    const response = await axios.post(
-      "https://backendchrist.onrender.com/submit-form",
-      formDataToSubmit,
-      { headers: { "Content-Type": "application/json" } }
-    );
-    console.log("Success:", response.data);
-
-    setShowInitialPaymentButtons(true);  // Show modal after API success
-  } catch (error) {
-    console.error("Error submitting form:", error);
-    alert("Form submission failed. Please try again.");
-  } finally {
-    setLoading(false); // Stop loading after API response
+  const handleShowPaymentModal = () => {
+    console.log("Opening Payment Modal...");
+    setShowPaymentModal(true); // ✅ Ensure modal is opened
+  };
+  function closePaymentModal() {
+    setShowPaymentModal(false);
   }
-};
-
-const handleShowPaymentModal = () => {
-  console.log("Opening Payment Modal...");
-  setShowPaymentModal(true); // ✅ Ensure modal is opened
-};
-function closePaymentModal() {
-  setShowPaymentModal(false);
-}
 
   return (
     <div className="body-form">
@@ -467,6 +467,10 @@ function closePaymentModal() {
                   className="form-control"
                   dateFormat="dd-MM-yyyy"
                   wrapperClassName="date-picker-wrapper w-100"
+                  showYearDropdown
+                  scrollableYearDropdown
+                  yearDropdownItemNumber={100}
+                  dropdownMode="select"
                 />
               </div>
 
@@ -590,10 +594,10 @@ function closePaymentModal() {
                   style={{ height: "60px" }}
                   required
                 >
-                  <option value="">SELECT ACCOMMODATION</option>
+                  <option value="" selected disabled hidden>SELECT ACCOMMODATION</option>
                   <option value="common">COMMON ACCOMMODATION</option>
                   <option value="paid">PAID ACCOMMODATION</option>
-                  <option value="paid">NOT NEEDED</option>
+                  <option value="not needed">NOT NEEDED</option>
                 </select>
               </div>
 
