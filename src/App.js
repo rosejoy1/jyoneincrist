@@ -10,10 +10,6 @@ function App() {
       <Routes>
         <Route path="/" element={<Form />} />
         <Route path="/adminpanel" element={<AdminPanel />} />
-      
-      
-
-
       </Routes>
     </Router>
   );

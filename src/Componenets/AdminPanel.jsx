@@ -9,7 +9,7 @@ const AdminPanel = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/registered-users");
+        const response = await axios.get("https://backendchrist.onrender.com/registered-users");
         console.log("Fetched users:", response.data);  // Check response structure
         setUsers(response.data);
       } catch (error) {
@@ -24,7 +24,7 @@ const AdminPanel = () => {
   // Download Excel File
   const downloadExcel = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/export-excel", {
+      const response = await axios.get("https://backendchrist.onrender.com/export-excel", {
         responseType: "blob", // Get binary data
       });
   
@@ -71,8 +71,10 @@ const AdminPanel = () => {
                 <th>Category</th>
                 <th>Spouse Name</th>
                 <th>Spouse Phone</th>
+                
                 <th>Number of Children</th>
                 <th>Children Details</th>
+                <th>Payment</th>
               </tr>
             </thead>
             <tbody>
@@ -95,6 +97,7 @@ const AdminPanel = () => {
                     <td>{user.spouseName || "N/A"}</td>
                     <td>{user.spousePhone || "N/A"}</td>
                     <td>{user.numChildren || 0}</td>
+                   
                     <td>
                       {user.children && user.children.length > 0 ? (
                         <ul>
@@ -108,6 +111,7 @@ const AdminPanel = () => {
                         "N/A"
                       )}
                     </td>
+                    <td>{user.paymentStatus || "N/A"}</td>
                   </tr>
                 ))
               ) : (

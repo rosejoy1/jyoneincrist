@@ -5,17 +5,110 @@ import logo from "./Images/jy.png";
 import Counter from "./Counter";
 import RightSection from "./RightSection";
 import axios from "axios";
-import Admin from "./Admin"
+import Admin from "./Admin";
 import Login from "./Login"; // Import the Login component
 import "./Admin.css";
-import qrcode from './Images/qrcode.jpg'
+import qrcode from "./Images/qrcode.jpg";
+import DialogBox from "./DialogBox";
+import { useNavigate } from 'react-router-dom';
+
 
 const Form = () => {
-  const [category, setCategory] = useState("");;
+  const [category, setCategory] = useState("");
   const [isFormValid, setIsFormValid] = useState(false);
   const [numChildren, setNumChildren] = useState(0);
 
-  // FOR HANDLE ADMIN LOGIN 
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+
+
+  const [showDialog, setShowDialog] = useState(false);
+  const [dialogContent, setDialogContent] = useState({
+    title: "",
+    message: "",
+  });
+
+  
+  const handlePayment = async () => {
+    closePaymentModal();
+    try {
+      if (!formData.email) {
+        alert("Please enter your email before proceeding.");
+        return;
+      }
+  
+      const response = await fetch("https://backendchrist.onrender.com/update-payment-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formData.email,
+          paymentStatus: "yes",  // <-- Set to "yes"
+        }),
+      });
+  
+      const data = await response.json();
+      console.log("Payment update response:", data); // Debugging info
+  
+      if (data.message) {
+        setFormData((prev) => ({ ...prev, paymentStatus: "yes" })); // <-- Update UI state
+  
+        setDialogContent({
+          title: "🎉 Registration Completed",
+          message: "Your payment was successful! Please send the screenshot to Jesus Youth Mananthavady.",
+        });
+      } else {
+        alert("Payment update failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error updating payment status:", error);
+      alert("Failed to update payment status. Please try again.");
+    }
+  
+    setShowDialog(true);
+  };
+  
+  const handlePayLater = async () => {
+    closePaymentModal();
+    try {
+      if (!formData.email) {
+        alert("Please enter your email before proceeding.");
+        return;
+      }
+  
+      // Send request to backend to update payment status to "no"
+      const response = await fetch("https://backendchrist.onrender.com/update-payment-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formData.email,
+          paymentStatus: "no", // <-- Ensure it updates as "no"
+        }),
+      });
+  
+      const data = await response.json();
+      console.log("Payment update response:", data); // Debugging
+  
+      if (data.message) {
+        setFormData((prev) => ({ ...prev, paymentStatus: "no" })); // Update local state
+  
+        setDialogContent({
+          title: "ℹ️ Registration Completed",
+          message: "Your payment is pending. Please complete it later.",
+        });
+      } else {
+        alert("Payment update failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error updating payment status:", error);
+      alert("Failed to update payment status. Please try again.");
+    }
+  
+    setShowDialog(true);
+  };
+  
+
+  // FOR HANDLE ADMIN LOGIN
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const handleLoginClick = () => {
@@ -41,60 +134,56 @@ const Form = () => {
     spouseName: "",
     spousePhone: "",
     numChildren: "",
-    paymentStatus:"NO",
+    paymentStatus: "NO",
     children: [],
   });
 
-  // Handle input changes
-  const handleChange = (e) => {
-    const handleChange = (e) => {
-      const { name, value } = e.target;
-      setFormData((prevState) => {
-        const updatedForm = { ...prevState, [name]: value };
+// Handle general input changes
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  const parsedValue = name === "numChildren" ? parseInt(value) : value;
 
-        // If category is family, handle spouse data
-        if (updatedForm.category === "family") {
-          if (updatedForm.gender === "male" && name === "spouseName") {
-            updatedForm.spouseName = value;
-          } else if (updatedForm.gender === "female" && name === "spouseName") {
-            updatedForm.spouseName = value;
-          }
-
-          if (updatedForm.gender === "male" && name === "spousePhone") {
-            updatedForm.spousePhone = value;
-          } else if (updatedForm.gender === "female" && name === "spousePhone") {
-            updatedForm.spousePhone = value;
-          }
-        }
-        validateForm(updatedForm);
-        return updatedForm;
-      });
+  setFormData((prevState) => {
+    const updatedForm = {
+      ...prevState,
+      [name]: parsedValue,
     };
-    const { name, value } = e.target;
-    setFormData((prevState) => {
-      const updatedForm = { ...prevState, [name]: value };
-      validateForm(updatedForm);
-      return updatedForm;
-    });
-  };
-  const handleChildrenChange = (index, field, value) => {
-    setFormData((prevData) => {
-      const updatedChildren = [...prevData.children];
 
-      // Ensure the child object exists before modifying
-      if (!updatedChildren[index]) {
-        updatedChildren[index] = { name: "", age: "", gender: "" };
-      }
+    // Handle spouse fields (if needed)
+    if (
+      updatedForm.category === "family" &&
+      (name === "spouseName" || name === "spousePhone") &&
+      updatedForm.gender
+    ) {
+      updatedForm[name] = value;
+    }
 
-      updatedChildren[index] = {
-        ...updatedChildren[index],
-        [field]: value,
-      };
+    validateForm(updatedForm);
+    return updatedForm;
+  });
+};
 
-      return { ...prevData, children: updatedChildren };
-    });
-  };
+// Handle child input changes
+const handleChildrenChange = (index, field, value) => {
+  setFormData((prevData) => {
+    const updatedChildren = [...prevData.children];
 
+    // Ensure the child exists
+    if (!updatedChildren[index]) {
+      updatedChildren[index] = { name: "", age: "", gender: "" };
+    }
+
+    updatedChildren[index] = {
+      ...updatedChildren[index],
+      [field]: value,
+    };
+
+    return {
+      ...prevData,
+      children: updatedChildren,
+    };
+  });
+};
 
   // Validate form fields
   const validateForm = (updatedForm) => {
@@ -109,7 +198,6 @@ const Form = () => {
 
       "accommodation",
       "gender",
-
     ];
 
     if (updatedForm.category === "family") {
@@ -128,47 +216,48 @@ const Form = () => {
     validateForm(formData);
   }, [formData]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true); // Start loading
 
-    const formDataToSubmit = {
-        ...formData,
-        numChildren: numChildren,
-        children: formData.children.map(child => ({
-            name: child.name,
-            age: child.age,
-            gender: child.gender,
-        })),
-        paymentStatus: "no", // Default until payment is confirmed
-    };
+  const formDataToSubmit = {
+    ...formData,
+    numChildren: numChildren,
+    children: formData.children.map((child) => ({
+      name: child.name,
+      age: child.age,
+      gender: child.gender,
+    })),
+    paymentStatus: "no", // Default until payment is confirmed
+  };
 
-    try {
-        // Submit form data to backend
-        const response = await axios.post("https://backendchrist.onrender.com/submit-form", formDataToSubmit, {
-            headers: { "Content-Type": "application/json" },
-        });
+  try {
+    const response = await axios.post(
+      "https://backendchrist.onrender.com/submit-form",
+      formDataToSubmit,
+      { headers: { "Content-Type": "application/json" } }
+    );
+    console.log("Success:", response.data);
 
-        console.log("Success:", response.data);
-        
-        // Show modal instead of adding below form
-        showPaymentModal();
-
-    } catch (error) {
-        console.error("Error submitting form:", error);
-        alert("Form submission failed. Please try again.");
-    }
+    showPaymentModal(); // Show modal after API success
+  } catch (error) {
+    console.error("Error submitting form:", error);
+    alert("Form submission failed. Please try again.");
+  } finally {
+    setLoading(false); // Stop loading after API response
+  }
 };
 
-function showPaymentModal() {
-  const existingModal = document.getElementById("paymentModal");
-  if (existingModal) existingModal.remove();
+  function showPaymentModal() {
+    const existingModal = document.getElementById("paymentModal");
+    if (existingModal) existingModal.remove();
 
-  const modal = document.createElement("div");
-  modal.id = "paymentModal";
+    const modal = document.createElement("div");
+    modal.id = "paymentModal";
 
-  modal.innerHTML = `
+    modal.innerHTML = `
       <div class="modal-content">
-          <span class="close" onclick="closePaymentModal()">&times;</span>
+          <span class="close" id="closeModal">&times;</span>
           <h3>Complete Your Payment</h3>
           <p>Choose any of the following payment options:</p>
 
@@ -190,82 +279,98 @@ function showPaymentModal() {
       </div>
   `;
 
-  document.body.appendChild(modal);
-  document.getElementById("paymentModal").style.display = "flex";
+    document.body.appendChild(modal);
+    document.getElementById("paymentModal").style.display = "flex";
 
-  // Handle Pay Now Click
-  document.getElementById("payNow").addEventListener("click", async () => {
-    try {
-        // Check if email is provided
-        if (!formData.email) {
-            alert("Please enter your email before proceeding.");
-            return;
-        }
+    document.getElementById("payNow").addEventListener("click", handlePayment);
+    document
+      .getElementById("payLater")
+      .addEventListener("click", handlePayLater);
+    document.getElementById("closeModal").addEventListener("click", () => {
+      document.getElementById("paymentModal").remove();
+    });
 
-        // Send request to update payment status
-        const response = await axios.post("https://backendchrist.onrender.com/update-payment-status", {
-            email: formData.email,
-            paymentStatus: "yes",
-        });
+    // Attach event listener for closing the modal
+    document
+      .getElementById("closeModal")
+      .addEventListener("click", closePaymentModal);
 
-        // Check response from the server
-        if (response.data.message) {
-            // Show success message
-            showDialog(
-                "🎉 Registration Completed",
-                "Your payment was successful! Please send the screenshot to Jesus Youth Mananthavady."
-            );
-        } else {
-            alert("Payment update failed. Please try again.");
-        }
+    // Handle Pay Now Click
+    // document.getElementById("payNow").addEventListener("click", async () => {
+    //   try {
+    //     if (!formData.email) {
+    //       alert("Please enter your email before proceeding.");
+    //       return;
+    //     }
 
-    } catch (error) {
-        console.error("Error updating payment status:", error);
-        alert("Failed to update payment status. Please try again.");
-    }
-});
+    //     const response = await axios.post(
+    //       "https://backendchrist.onrender.com/update-payment-status",
+    //       { email: formData.email, paymentStatus: "yes" }
+    //     );
 
+    //     if (response.data.message) {
+    //       showDialog(
+    //         "🎉 Registration Completed",
+    //         "Your payment was successful!"
+    //       );
+    //     } else {
+    //       alert("Payment update failed. Please try again.");
+    //     }
+    //   } catch (error) {
+    //     console.error("Error updating payment status:", error);
+    //     alert("Failed to update payment status. Please try again.");
+    //   }
+    // });
 
-  // Handle Pay Later Click
-  document.getElementById("payLater").addEventListener("click", () => {
-      showDialog(
-          "ℹ️ Registration Completed",
-          "Your payment is pending. Please complete it later."
-      );
-  });
+    // Handle Pay Later Click
+    // document.getElementById("payLater").addEventListener("click", () => {
+    //   showDialog("ℹ️ Registration Completed", "Your payment is pending.");
+    // });
 
-  // Function to Show Dialog Box
-  function showDialog(title, message) {
-      const dialog = document.createElement("div");
-      dialog.className = "dialog-box";
-      dialog.innerHTML = `
-          <div class="dialog-content">
-              <h3>${title}</h3>
-              <p>${message}</p>
-              <button class="btn btn-green" onclick="closeDialog()">OK</button>
-          </div>
-      `;
-      document.body.appendChild(dialog);
+    // function showDialog(title, message) {
+    //   const dialog = document.createElement("div");
+    //   dialog.className = "dialog-box";
+    //   dialog.innerHTML = `
+    //       <div class="dialog-content">
+    //           <h3>${title}</h3>
+    //           <p>${message}</p>
+    //           <button class="btn btn-green" id="closeDialog">OK</button>
+    //       </div>
+    //   `;
+    //   document.body.appendChild(dialog);
+    //   document.getElementById("closeDialog").addEventListener("click", () => {
+    //     document.querySelector(".dialog-box")?.remove();
+    //     closePaymentModal();
+    //   });
+    // }
   }
 
-  // Function to Close Dialog & Modal
-  function closeDialog() {
-      document.querySelector(".dialog-box")?.remove();
-      closePaymentModal();
-  }
-}
-// Function to Close the Payment Modal
-function closePaymentModal() {
-  const modal = document.getElementById("paymentModal");
-  if (modal) {
+  function closePaymentModal() {
+    const modal = document.getElementById("paymentModal");
+    if (modal) {
       modal.remove();
+    }
   }
-}
-
-
 
   return (
     <div className="body-form">
+      {loading && (
+        <div className="loader-container">
+          <div className="loader"></div>
+        </div>
+      )}
+
+      {showDialog && (
+        <DialogBox
+          title={dialogContent.title}
+          message={dialogContent.message}
+          onClose={() => {
+            setShowDialog(false);
+            
+          }}
+          
+        />
+      )}
       <div className="form-wrapper d-flex flex-column align-items-center justify-content-center p-4 w-100">
         {/* Header */}
         <header className="header d-flex flex-column flex-md-row align-items-center justify-content-between w-100">
@@ -280,24 +385,29 @@ function closePaymentModal() {
                 width: "10px", // Scales with viewport width
                 maxWidth: "100px", // Ensures it doesn't get too big
                 minWidth: "60px", // Prevents it from getting too small
-                height: "auto" // Maintains aspect ratio
+                height: "auto", // Maintains aspect ratio
               }}
             />
             <div className="admin-container">
               {isPopupOpen && (
                 <div className="popup-overlay">
                   <div className="popup">
-
                     {/* Pass isPopupOpen to reset the state */}
-                    <Login key={isPopupOpen} isPopupOpen={isPopupOpen} handleClose={handleClosePopup} />
-
+                    <Login
+                      key={isPopupOpen}
+                      isPopupOpen={isPopupOpen}
+                      handleClose={handleClosePopup}
+                    />
                   </div>
                 </div>
               )}
             </div>
-            <h2 style={{ fontSize: "23px", letterSpacing: "2px 2px" }} className="text-white ms-2 fw-bold text-uppercase text-center text-md-start">
-              <span >JESUS YOUTH</span> <br className="d-none d-md-block" />
-              <span >MANANTHAVADY</span>
+            <h2
+              style={{ fontSize: "23px", letterSpacing: "2px 2px" }}
+              className="text-white ms-2 fw-bold text-uppercase text-center text-md-start"
+            >
+              <span>JESUS YOUTH</span> <br className="d-none d-md-block" />
+              <span>MANANTHAVADY</span>
             </h2>
           </div>
 
@@ -315,16 +425,38 @@ function closePaymentModal() {
 
           <div className="left-section">
             <h3 className="text-white fw-bold ">REGISTRATION</h3>
-            <form action="https://backendchrist.onrender.com/submit-form" method="POST" onSubmit={handleSubmit} className="row g-3"  >
-
+            <form
+              action="https://backendchrist.onrender.com/submit-form"
+              method="POST"
+              onSubmit={handleSubmit}
+              className="row g-3"
+            >
               {/* FULL NAME */}
               <div className="col-12">
-                <input type="text" className="form-control" name="fullName" value={formData.fullName} onChange={handleChange} style={{ height: "60px" }} placeholder="Full Name" required />
+                <input
+                  type="text"
+                  className="form-control"
+                  name="fullName"
+                  value={formData.fullName}
+                  onChange={handleChange}
+                  style={{ height: "60px" }}
+                  placeholder="Full Name"
+                  required
+                />
               </div>
 
               {/*HOUSE NAME */}
               <div className="col-md-6">
-                <input type="text" style={{ height: "60px" }} name="houseName" value={formData.houseName} onChange={handleChange} className="form-control" placeholder="House Name" required />
+                <input
+                  type="text"
+                  style={{ height: "60px" }}
+                  name="houseName"
+                  value={formData.houseName}
+                  onChange={handleChange}
+                  className="form-control"
+                  placeholder="House Name"
+                  required
+                />
               </div>
 
               {/* GENDER - DROPDOWN */}
@@ -337,7 +469,9 @@ function closePaymentModal() {
                   required
                   onChange={handleChange}
                 >
-                  <option value="" selected disabled hidden>SELECT GENDER</option>
+                  <option value="" selected disabled hidden>
+                    SELECT GENDER
+                  </option>
                   <option value="female">FEMALE</option>
                   <option value="male">MALE</option>
                 </select>
@@ -345,20 +479,54 @@ function closePaymentModal() {
 
               {/* DATE OF BIRTH  */}
               <div className="col-md-6">
-                <input type="date" name="dob" onChange={handleChange} style={{ height: "60px" }} value={formData.dob} className="form-control" required />
+                <input
+                  type="date"
+                  name="dob"
+                  onChange={handleChange}
+                  style={{ height: "60px" }}
+                  value={formData.dob}
+                  className="form-control"
+                  placeholder="DOB"
+                  required
+                />
               </div>
 
               {/* PLACE & PARISH */}
               <div className="col-md-6">
-                <input type="text" style={{ height: "60px" }} name="place" value={formData.place} onChange={handleChange} className="form-control" placeholder="Native Place" required />
+                <input
+                  type="text"
+                  style={{ height: "60px" }}
+                  name="place"
+                  value={formData.place}
+                  onChange={handleChange}
+                  className="form-control"
+                  placeholder="Native Place"
+                  required
+                />
               </div>
 
               <div className="col-md-6">
-                <input type="text" style={{ height: "60px" }} name="parish" value={formData.parish} onChange={handleChange} className="form-control" placeholder="Parish" required />
+                <input
+                  type="text"
+                  style={{ height: "60px" }}
+                  name="parish"
+                  value={formData.parish}
+                  onChange={handleChange}
+                  className="form-control"
+                  placeholder="Parish"
+                  required
+                />
               </div>
 
               <div className="col-md-6">
-                <select className="form-select" style={{ height: "60px" }} name="homeLocation" value={formData.homeLocation} onChange={handleChange} required>
+                <select
+                  className="form-select"
+                  style={{ height: "60px" }}
+                  name="homeLocation"
+                  value={formData.homeLocation}
+                  onChange={handleChange}
+                  required
+                >
                   <option value="">Select Home Location</option>
                   <option value="Mananthavady">MANANTHAVADY</option>
                   <option value="Dwaraka">DWARAKA</option>
@@ -374,22 +542,43 @@ function closePaymentModal() {
 
               {/* EMAIL & PHONE */}
               <div className="col-md-6">
-                <input type="email" className="form-control" name="email" value={formData.email} onChange={handleChange} style={{ height: "60px" }} placeholder="E-Mail" required />
+                <input
+                  type="email"
+                  className="form-control"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  style={{ height: "60px" }}
+                  placeholder="E-Mail"
+                  required
+                />
               </div>
               <div className="col-md-6">
-                <input type="number" name="phone" value={formData.phone} onChange={handleChange} className="form-control" style={{ height: "60px" }} placeholder="Contact" required />
+                <input
+                  type="number"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="form-control"
+                  style={{ height: "60px" }}
+                  placeholder="Contact"
+                  required
+                />
               </div>
 
               {/* CATEGORY - DROPDOWN */}
               <div className="col-md-12">
-                <select style={{ height: "60px" }}
+                <select
+                  style={{ height: "60px" }}
                   name="category"
                   className="form-select"
                   value={formData.category}
                   required
                   onChange={handleChange}
                 >
-                  <option value="" selected disabled hidden>SELECT CATEGORY</option>
+                  <option value="" selected disabled hidden>
+                    SELECT CATEGORY
+                  </option>
                   <option value="family">FAMILY</option>
                   <option value="youth">YOUTH</option>
                   <option value="campus">CAMPUS</option>
@@ -399,24 +588,20 @@ function closePaymentModal() {
 
               {/* EXPERIENCE  */}
               <div className="col-md-6">
-                {/* <input type="number" name="experience" value={formData.experience} onChange={handleChange} style={{ height: "60px" }} className="form-control" min="0" placeholder="Year of Experience in JY" required /> */}
-                <select style={{ height: '60px' }} className="form-control" name="experience" value={formData.experience} onChange={handleChange} min="0" required>
-                  <option selected disabled hidden>Your JY Experience</option>
-                  <option value="0-0.5">0-6 Months</option>
-                  <option value="0.5-1">6-12 Months</option>
-                  <option value="1-2">1-2 Years</option>
-                  <option value="2-4">2-4 Years</option>
-                  <option value="4-6">4-6 Years</option>
-                  <option value="6-10">6-10 Years</option>
-                  <option value="10-15">10-15 Years</option>
-                  <option value="15-20">15-20 Years</option>
-                  <option value="20 above">More than 20 Years</option>
-                </select>
+               <input type="number" name="experience" value={formData.experience} onChange={handleChange} style={{ height: "60px" }} className="form-control" min="0" placeholder="Year of Experience in JY" required /> 
+         
               </div>
 
               {/* ACCOMMODATION - DROPDOWN */}
               <div className="col-md-6">
-                <select className="form-select" name="accommodation" value={formData.accommodation} onChange={handleChange} style={{ height: "60px" }} required>
+                <select
+                  className="form-select"
+                  name="accommodation"
+                  value={formData.accommodation}
+                  onChange={handleChange}
+                  style={{ height: "60px" }}
+                  required
+                >
                   <option value="">SELECT ACCOMMODATION</option>
                   <option value="common">COMMON ACCOMMODATION</option>
                   <option value="paid">PAID ACCOMMODATION</option>
@@ -429,49 +614,77 @@ function closePaymentModal() {
                   {formData.gender === "male" && (
                     <>
                       <div className="col-md-6">
-                        <input type="text" style={{ height: "60px" }} name="spouseName"
+                        <input
+                          type="text"
+                          style={{ height: "60px" }}
+                          name="spouseName"
                           placeholder="Wife's Name"
                           value={formData.spouseName || ""}
-                          onChange={handleChange} className="form-control" required />
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        />
                       </div>
                       <div className="col-md-6">
-                        <input type="number" style={{
-                          height: "60px", WebkitAppearance: 'none', MozAppearance: 'textfield'
-                        }} name="spousePhone"
+                        <input
+                          type="number"
+                          style={{
+                            height: "60px",
+                            WebkitAppearance: "none",
+                            MozAppearance: "textfield",
+                          }}
+                          name="spousePhone"
                           value={formData.spousePhone || ""}
-                          onChange={handleChange} className="form-control"
-                          placeholder="Wife's Phone Number" required />
+                          onChange={handleChange}
+                          className="form-control"
+                          placeholder="Wife's Phone Number"
+                          required
+                        />
                       </div>
                     </>
                   )}
                   {formData.gender === "female" && (
                     <>
                       <div className="col-md-6">
-                        <input type="text" style={{ height: "60px" }} name="spouseName"
+                        <input
+                          type="text"
+                          style={{ height: "60px" }}
+                          name="spouseName"
                           value={formData.spouseName || ""}
-                          onChange={handleChange} className="form-control"
-                          placeholder="Husband's Name" 
-                          required />
+                          onChange={handleChange}
+                          className="form-control"
+                          placeholder="Husband's Name"
+                          required
+                        />
                       </div>
                       <div className="col-md-6">
-                        <input type="tel" style={{ height: "60px" }} name="spousePhone"
+                        <input
+                          type="tel"
+                          style={{ height: "60px" }}
+                          name="spousePhone"
                           value={formData.spousePhone || ""}
-                          onChange={handleChange} className="form-control"
-                          placeholder="Husband's Phone Number" required />
+                          onChange={handleChange}
+                          className="form-control"
+                          placeholder="Husband's Phone Number"
+                          required
+                        />
                       </div>
                     </>
                   )}
                   <div className="col-md-6">
-                    <input
-                      placeholder="Number of Children"
-                      style={{ height: "60px" }}
-                      type="number"
-                      name="numChildren"
-                      className="form-control"
-                      min="0"
-                      value={numChildren || ""}
-                      onChange={(e) => setNumChildren(parseInt(e.target.value))}
-                    />
+                  <input
+  type="number"
+  name="numChildren"
+  value={formData.numChildren || ""}
+  min="0"
+  className="form-control"
+  style={{ height: "60px" }}
+  onChange={(e) => {
+    handleChange(e); // updates formData
+    setNumChildren(parseInt(e.target.value)); // keeps UI state in sync
+  }}
+/>
+
 
                   </div>
 
@@ -479,14 +692,18 @@ function closePaymentModal() {
                   {Array.from({ length: numChildren }).map((_, index) => (
                     <div key={index} className="row child-details">
                       <div className="col-md-4">
-                        <label className="form-label text-white">CHILD {index + 1} NAME</label>
+                        <label className="form-label text-white">
+                          CHILD {index + 1} NAME
+                        </label>
                         <input
                           type="text"
                           style={{ height: "60px" }}
                           className="form-control"
-                          name={'children[${index}].name'}
+                          name={"children[${index}].name"}
                           value={formData.children[index]?.name || ""}
-                          onChange={(e) => handleChildrenChange(index, "name", e.target.value)}
+                          onChange={(e) =>
+                            handleChildrenChange(index, "name", e.target.value)
+                          }
                           required
                         />
                       </div>
@@ -496,9 +713,11 @@ function closePaymentModal() {
                           type="number"
                           style={{ height: "60px" }}
                           className="form-control"
-                          name={'children[${index}].age'}
+                          name={"children[${index}].age"}
                           value={formData.children[index]?.age || ""}
-                          onChange={(e) => handleChildrenChange(index, "age", e.target.value)}
+                          onChange={(e) =>
+                            handleChildrenChange(index, "age", e.target.value)
+                          }
                           min="0"
                           required
                         />
@@ -508,36 +727,43 @@ function closePaymentModal() {
                         <select
                           style={{ height: "60px" }}
                           className="form-select"
-                          name={'children[${index}].gender'}
+                          name={"children[${index}].gender"}
                           value={formData.children[index]?.gender || ""}
-                          onChange={(e) => handleChildrenChange(index, "gender", e.target.value)}
+                          onChange={(e) =>
+                            handleChildrenChange(
+                              index,
+                              "gender",
+                              e.target.value
+                            )
+                          }
                           required
                         >
-                          <option value="" selected disabled hidden>SELECT GENDER</option>
+                          <option value="" selected disabled hidden>
+                            SELECT GENDER
+                          </option>
                           <option value="male">MALE</option>
                           <option value="female">FEMALE</option>
                         </select>
                       </div>
                     </div>
                   ))}
-
                 </>
               )}
 
               {/* SUBMIT BUTTON */}
               <div className="col-12">
                 <button
-                  type="submit" id="submit-b" style={{ height: "60px" }}
+                  type="submit"
+                  id="submit-b"
+                  style={{ height: "60px" }}
                   className="btn custom-submit-btuttonn w-100 d-flex align-items-center justify-content-center"
                 >
                   SUBMIT <span className="check-icon">&#10003;</span>
                 </button>
-
               </div>
             </form>
           </div>
         </div>
-
       </div>
     </div>
   );
