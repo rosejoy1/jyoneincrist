@@ -11,6 +11,8 @@ import "./Admin.css";
 import qrcode from "./Images/qrcode.jpg";
 import DialogBox from "./DialogBox";
 import { useNavigate } from 'react-router-dom';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 
 const Form = () => {
@@ -63,7 +65,7 @@ const Form = () => {
   
         setDialogContent({
           title: "🎉 Registration Completed",
-          message: "Your payment was successful! Please send the screenshot to Jesus Youth Mananthavady (+91 8943548306 / +91 9946844676).",
+          message: "Your payment was successful! Please send the screenshot to Jesus Youth Mananthavady (+91 8943548306).",
         });
       } else {
         alert("Payment update failed. Please try again.");
@@ -194,31 +196,36 @@ const handleChildrenChange = (index, field, value) => {
 };
 
   // Validate form fields
-  const validateForm = (updatedForm) => {
-    const requiredFields = [
-      "fullName",
-      "houseName",
-      "place",
-      "parish",
-      "email",
-      "phone",
-      "dob",
+const validateForm = (updatedForm) => {
+  const requiredFields = [
+    "fullName",
+    "houseName",
+    "place",
+    "parish",
+    "email",
+    "phone",
+    "dob",
+    "accommodation",
+    "gender",
+  ];
 
-      "accommodation",
-      "gender",
-    ];
+  if (updatedForm.category === "family") {
+    requiredFields.push("spouseName", "spousePhone");
+  }
 
-    if (updatedForm.category === "family") {
-      requiredFields.push("spouseName", "spousePhone");
+  const isValid = requiredFields.every((field) => {
+    const value = updatedForm[field];
+
+    if (typeof value === "string") {
+      return value.trim() !== "";
     }
 
-    // Check if all required fields are filled
-    const isValid = requiredFields.every(
-      (field) => updatedForm[field]?.trim() !== ""
-    );
+    return value !== undefined && value !== null && value !== "";
+  });
 
-    setIsFormValid(isValid);
-  };
+  setIsFormValid(isValid);
+};
+
 
   useEffect(() => {
     validateForm(formData);
@@ -266,14 +273,11 @@ function closePaymentModal() {
 
   return (
     <div className="body-form">
-
       {loading && (
         <div className="loader-container">
           <div className="loader"></div>
         </div>
       )}
-
-
 
       {showDialog && (
         <DialogBox
@@ -281,65 +285,70 @@ function closePaymentModal() {
           message={dialogContent.message}
           onClose={() => {
             setShowDialog(false);
-            
           }}
-          
         />
       )}
-{showInitialPaymentButtons && (
-  <div className="payment-choice-modal">
-    <div className="modal-content">
-      <h3>Choose a Payment Option</h3>
-      <p>Please choose whether to pay now or later.</p>
-      <button
-        className="btn btn-success m-2"
-        onClick={() => {
-          setShowInitialPaymentButtons(false);
-          setShowPaymentModal(true);
-        }}
-      >
-        Pay Now
-      </button>
-      <button
-        className="btn btn-secondary m-2"
-        onClick={() => {
-          setShowInitialPaymentButtons(false);
-          handlePayLater();
-        }}
-      >
-        Pay Later
-      </button>
-    </div>
-  </div>
-)}
+      {showInitialPaymentButtons && (
+        <div className="payment-choice-modal">
+          <div className="modal-content">
+            <h3>Choose a Payment Option</h3>
+            <p>Please choose whether to pay now or later.</p>
+            <button
+              className="btn btn-success m-2"
+              onClick={() => {
+                setShowInitialPaymentButtons(false);
+                setShowPaymentModal(true);
+              }}
+            >
+              Pay Now
+            </button>
+            <button
+              className="btn btn-secondary m-2"
+              onClick={() => {
+                setShowInitialPaymentButtons(false);
+                handlePayLater();
+              }}
+            >
+              Pay Later
+            </button>
+          </div>
+        </div>
+      )}
 
-{showPaymentModal && (
-  <div className="modal-overlay">
-    <div className="modal-content">
-      <span className="close" onClick={() => setShowPaymentModal(false)}>&times;</span>
-      <h3>Complete Your Payment</h3>
-      <p>Choose any of the following payment options:</p>
+      {showPaymentModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <span className="close" onClick={() => setShowPaymentModal(false)}>
+              &times;
+            </span>
+            <h3>Complete Your Payment</h3>
+            <p>Choose any of the following payment options:</p>
 
-      <h4>Option 1: UPI Payment</h4>
-      <div className="qr-container">
-        <img src={qrcode} alt="QR Code" width="200" />
-      </div>
-      <p><strong>UPI ID:</strong> 8943548306</p>
+            <h4>Option 1: UPI Payment</h4>
+            <div className="qr-container">
+              <img src={qrcode} alt="QR Code" width="200" />
+            </div>
+            <p>
+              <strong>UPI ID:</strong> 8943548306
+            </p>
 
-      <h4>Option 2: Bank Transfer</h4>
-    
-      <p><strong>Account Number:</strong> 10690100407606</p>
-      <p><strong>IFSC Code:</strong> FDRL0001069</p>
+            <h4>Option 2: Bank Transfer</h4>
 
-      <div className="btn-container">
-        <button className="btn btn-green" onClick={handlePayment}>OK</button>
-      </div>
-    </div>
-  </div>
-)}
+            <p>
+              <strong>Account Number:</strong> 10690100407606
+            </p>
+            <p>
+              <strong>IFSC Code:</strong> FDRL0001069
+            </p>
 
-
-
+            <div className="btn-container">
+              <button className="btn btn-green" onClick={handlePayment}>
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="form-wrapper d-flex flex-column align-items-center justify-content-center p-4 w-100">
         {/* Header */}
@@ -449,10 +458,17 @@ function closePaymentModal() {
 
               {/* DATE OF BIRTH  */}
               <div className="col-md-6">
-                <label className="form-label text-white">DATE OF BIRTH</label>
-                <input type="date" name="dob" onChange={handleChange} style={{ height: "60px" }} value={formData.dob} className="form-control" required />
+                <DatePicker
+                  selected={formData.dob}
+                  onChange={(date) =>
+                    handleChange({ target: { name: "dob", value: date } })
+                  }
+                  placeholderText="Date Of Birth"
+                  className="form-control"
+                  dateFormat="dd-MM-yyyy"
+                  wrapperClassName="date-picker-wrapper w-100"
+                />
               </div>
-
 
               {/* PLACE & PARISH */}
               <div className="col-md-6">
@@ -551,8 +567,17 @@ function closePaymentModal() {
 
               {/* EXPERIENCE  */}
               <div className="col-md-6">
-               <input type="number" name="experience" value={formData.experience} onChange={handleChange} style={{ height: "60px" }} className="form-control" min="0" placeholder="Year of Experience in JY" required /> 
-         
+                <input
+                  type="number"
+                  name="experience"
+                  value={formData.experience}
+                  onChange={handleChange}
+                  style={{ height: "60px" }}
+                  className="form-control"
+                  min="0"
+                  placeholder="Year of Experience in JY"
+                  required
+                />
               </div>
 
               {/* ACCOMMODATION - DROPDOWN */}
@@ -635,20 +660,18 @@ function closePaymentModal() {
                     </>
                   )}
                   <div className="col-md-6">
-                  <input
-  type="number"
-  name="numChildren"
-  value={formData.numChildren || ""}
-  min="0"
-  className="form-control"
-  style={{ height: "60px" }}
-  onChange={(e) => {
-    handleChange(e); // updates formData
-    setNumChildren(parseInt(e.target.value)); // keeps UI state in sync
-  }}
-/>
-
-
+                    <input
+                      type="number"
+                      name="numChildren"
+                      value={formData.numChildren || ""}
+                      min="0"
+                      className="form-control"
+                      style={{ height: "60px" }}
+                      onChange={(e) => {
+                        handleChange(e); // updates formData
+                        setNumChildren(parseInt(e.target.value)); // keeps UI state in sync
+                      }}
+                    />
                   </div>
 
                   {/* CHILDREN DETAILS DYNAMICALLY GENERATED */}
