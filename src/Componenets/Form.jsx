@@ -17,6 +17,10 @@ const Form = () => {
   const [category, setCategory] = useState("");
   const [isFormValid, setIsFormValid] = useState(false);
   const [numChildren, setNumChildren] = useState(0);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+
+
+  const [showInitialPaymentButtons, setShowInitialPaymentButtons] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -29,33 +33,37 @@ const Form = () => {
     message: "",
   });
 
-  
   const handlePayment = async () => {
+    console.log("handlePayment triggered");
+  
     closePaymentModal();
+  
     try {
       if (!formData.email) {
         alert("Please enter your email before proceeding.");
         return;
       }
   
+      console.log("Submitting payment for:", formData.email);
+  
       const response = await fetch("https://backendchrist.onrender.com/update-payment-status", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: formData.email,
-          paymentStatus: "yes",  // <-- Set to "yes"
+          paymentStatus: "yes",
         }),
       });
   
       const data = await response.json();
-      console.log("Payment update response:", data); // Debugging info
+      console.log("Raw backend response:", data);
   
-      if (data.message) {
-        setFormData((prev) => ({ ...prev, paymentStatus: "yes" })); // <-- Update UI state
+      if (data.success || data.message) {
+        setFormData((prev) => ({ ...prev, paymentStatus: "yes" }));
   
         setDialogContent({
           title: "🎉 Registration Completed",
-          message: "Your payment was successful! Please send the screenshot to Jesus Youth Mananthavady.",
+          message: "Your payment was successful! Please send the screenshot to Jesus Youth Mananthavady (+91 8943548306 / +91 9946844676).",
         });
       } else {
         alert("Payment update failed. Please try again.");
@@ -239,7 +247,7 @@ const handleSubmit = async (e) => {
     );
     console.log("Success:", response.data);
 
-    showPaymentModal(); // Show modal after API success
+    setShowInitialPaymentButtons(true);  // Show modal after API success
   } catch (error) {
     console.error("Error submitting form:", error);
     alert("Form submission failed. Please try again.");
@@ -248,117 +256,24 @@ const handleSubmit = async (e) => {
   }
 };
 
-  function showPaymentModal() {
-    const existingModal = document.getElementById("paymentModal");
-    if (existingModal) existingModal.remove();
-
-    const modal = document.createElement("div");
-    modal.id = "paymentModal";
-
-    modal.innerHTML = `
-      <div class="modal-content">
-          <span class="close" id="closeModal">&times;</span>
-          <h3>Complete Your Payment</h3>
-          <p>Choose any of the following payment options:</p>
-
-          <h4>Option 1: UPI Payment</h4>
-          <div class="qr-container">
-              <img src="${qrcode}" alt="QR Code" width="200" />
-          </div>
-          <p><strong>UPI ID:</strong> 8943548306</p>
-
-          <h4>Option 2: Bank Transfer</h4>
-          <p><strong>Account Holder:</strong> JIBIN JOSEPH</p>
-          <p><strong>Account Number:</strong> 10690100407606</p>
-          <p><strong>IFSC Code:</strong> FDRL0001069</p>
-
-          <div class="btn-container">
-              <button class="btn btn-green" id="payNow">Pay Now</button>
-              <button class="btn btn-grey" id="payLater">Pay Later</button>
-          </div>
-      </div>
-  `;
-
-    document.body.appendChild(modal);
-    document.getElementById("paymentModal").style.display = "flex";
-
-    document.getElementById("payNow").addEventListener("click", handlePayment);
-    document
-      .getElementById("payLater")
-      .addEventListener("click", handlePayLater);
-    document.getElementById("closeModal").addEventListener("click", () => {
-      document.getElementById("paymentModal").remove();
-    });
-
-    // Attach event listener for closing the modal
-    document
-      .getElementById("closeModal")
-      .addEventListener("click", closePaymentModal);
-
-    // Handle Pay Now Click
-    // document.getElementById("payNow").addEventListener("click", async () => {
-    //   try {
-    //     if (!formData.email) {
-    //       alert("Please enter your email before proceeding.");
-    //       return;
-    //     }
-
-    //     const response = await axios.post(
-    //       "https://backendchrist.onrender.com/update-payment-status",
-    //       { email: formData.email, paymentStatus: "yes" }
-    //     );
-
-    //     if (response.data.message) {
-    //       showDialog(
-    //         "🎉 Registration Completed",
-    //         "Your payment was successful!"
-    //       );
-    //     } else {
-    //       alert("Payment update failed. Please try again.");
-    //     }
-    //   } catch (error) {
-    //     console.error("Error updating payment status:", error);
-    //     alert("Failed to update payment status. Please try again.");
-    //   }
-    // });
-
-    // Handle Pay Later Click
-    // document.getElementById("payLater").addEventListener("click", () => {
-    //   showDialog("ℹ️ Registration Completed", "Your payment is pending.");
-    // });
-
-    // function showDialog(title, message) {
-    //   const dialog = document.createElement("div");
-    //   dialog.className = "dialog-box";
-    //   dialog.innerHTML = `
-    //       <div class="dialog-content">
-    //           <h3>${title}</h3>
-    //           <p>${message}</p>
-    //           <button class="btn btn-green" id="closeDialog">OK</button>
-    //       </div>
-    //   `;
-    //   document.body.appendChild(dialog);
-    //   document.getElementById("closeDialog").addEventListener("click", () => {
-    //     document.querySelector(".dialog-box")?.remove();
-    //     closePaymentModal();
-    //   });
-    // }
-  }
-
-  function closePaymentModal() {
-    const modal = document.getElementById("paymentModal");
-    if (modal) {
-      modal.remove();
-    }
-  }
+const handleShowPaymentModal = () => {
+  console.log("Opening Payment Modal...");
+  setShowPaymentModal(true); // ✅ Ensure modal is opened
+};
+function closePaymentModal() {
+  setShowPaymentModal(false);
+}
 
   return (
     <div className="body-form">
+
       {loading && (
         <div className="loader-container">
           <div className="loader"></div>
         </div>
       )}
+
+
 
       {showDialog && (
         <DialogBox
@@ -371,6 +286,61 @@ const handleSubmit = async (e) => {
           
         />
       )}
+{showInitialPaymentButtons && (
+  <div className="payment-choice-modal">
+    <div className="modal-content">
+      <h3>Choose a Payment Option</h3>
+      <p>Please choose whether to pay now or later.</p>
+      <button
+        className="btn btn-success m-2"
+        onClick={() => {
+          setShowInitialPaymentButtons(false);
+          setShowPaymentModal(true);
+        }}
+      >
+        Pay Now
+      </button>
+      <button
+        className="btn btn-secondary m-2"
+        onClick={() => {
+          setShowInitialPaymentButtons(false);
+          handlePayLater();
+        }}
+      >
+        Pay Later
+      </button>
+    </div>
+  </div>
+)}
+
+{showPaymentModal && (
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <span className="close" onClick={() => setShowPaymentModal(false)}>&times;</span>
+      <h3>Complete Your Payment</h3>
+      <p>Choose any of the following payment options:</p>
+
+      <h4>Option 1: UPI Payment</h4>
+      <div className="qr-container">
+        <img src={qrcode} alt="QR Code" width="200" />
+      </div>
+      <p><strong>UPI ID:</strong> 8943548306</p>
+
+      <h4>Option 2: Bank Transfer</h4>
+    
+      <p><strong>Account Number:</strong> 10690100407606</p>
+      <p><strong>IFSC Code:</strong> FDRL0001069</p>
+
+      <div className="btn-container">
+        <button className="btn btn-green" onClick={handlePayment}>OK</button>
+      </div>
+    </div>
+  </div>
+)}
+
+
+
+
       <div className="form-wrapper d-flex flex-column align-items-center justify-content-center p-4 w-100">
         {/* Header */}
         <header className="header d-flex flex-column flex-md-row align-items-center justify-content-between w-100">
@@ -479,17 +449,10 @@ const handleSubmit = async (e) => {
 
               {/* DATE OF BIRTH  */}
               <div className="col-md-6">
-                <input
-                  type="date"
-                  name="dob"
-                  onChange={handleChange}
-                  style={{ height: "60px" }}
-                  value={formData.dob}
-                  className="form-control"
-                  placeholder="DOB"
-                  required
-                />
+                <label className="form-label text-white">DATE OF BIRTH</label>
+                <input type="date" name="dob" onChange={handleChange} style={{ height: "60px" }} value={formData.dob} className="form-control" required />
               </div>
+
 
               {/* PLACE & PARISH */}
               <div className="col-md-6">
