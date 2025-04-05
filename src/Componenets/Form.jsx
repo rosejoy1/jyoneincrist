@@ -683,13 +683,11 @@ const Form = () => {
                   {Array.from({ length: numChildren }).map((_, index) => (
                     <div key={index} className="row child-details">
                       <div className="col-md-4">
-                        <label className="form-label text-white">
-                          CHILD {index + 1} NAME
-                        </label>
                         <input
                           type="text"
                           style={{ height: "60px" }}
                           className="form-control"
+                          placeholder={`Child ${index + 1} Name`}
                           name={"children[${index}].name"}
                           value={formData.children[index]?.name || ""}
                           onChange={(e) =>
@@ -699,11 +697,11 @@ const Form = () => {
                         />
                       </div>
                       <div className="col-md-4">
-                        <label className="form-label text-white">AGE</label>
                         <input
                           type="number"
                           style={{ height: "60px" }}
                           className="form-control"
+                          placeholder="Age"
                           name={"children[${index}].age"}
                           value={formData.children[index]?.age || ""}
                           onChange={(e) =>
@@ -714,7 +712,6 @@ const Form = () => {
                         />
                       </div>
                       <div className="col-md-4">
-                        <label className="form-label text-white">GENDER</label>
                         <select
                           style={{ height: "60px" }}
                           className="form-select"
