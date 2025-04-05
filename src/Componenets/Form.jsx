@@ -668,6 +668,7 @@ const Form = () => {
                       type="number"
                       name="numChildren"
                       value={formData.numChildren || ""}
+                      placeholder="Number of Children"
                       min="0"
                       className="form-control"
                       style={{ height: "60px" }}
